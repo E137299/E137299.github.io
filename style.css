@@ -1,3 +1,23 @@
-header{
-    color: red;
+body{
+	background-color: purple;
+			}	
+header {
+  padding-b: 10px;
+  text-align: center;
+  background: purple;
+  color: white;
+  font-size: 60px;
+}
+
+contact {
+	padding: 0px;
+  text-align: center;
+  background: purple;
+  color: white;
+  font-size: 20px;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
 }
