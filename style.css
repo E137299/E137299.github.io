@@ -1,8 +1,9 @@
 body{
 	background-color: purple;
-			}	
+}	
+
 header {
-  padding-b: 10px;
+  padding-bottom: 10px;
   text-align: center;
   background: purple;
   color: white;
