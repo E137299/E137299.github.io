@@ -1,5 +1,5 @@
 body{
-	background-color: purple;
+	background-color: rgb(247, 11, 247);
 }	
 
 h1 {
@@ -28,4 +28,11 @@ html, body {
   margin-left: auto;
   margin-right: auto;
   width: 50%;
+}
+
+.desc{
+  margin-top: 50px;
+  margin-bottom: 100px;
+  margin-right: 150px;
+  margin-left: 80px;
 }
