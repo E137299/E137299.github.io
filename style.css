@@ -1,0 +1,11 @@
+h1 {
+    text-align: center;
+    color: purple;
+    font-family:Arial Narrow Bold;
+    font-size: 100px;
+}
+
+.team_logo {
+    width: 50%;
+    border-radius: 60px;
+}
