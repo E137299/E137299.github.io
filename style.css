@@ -1,8 +1,19 @@
-div.container{
+body{
+    background-color:forestgreen;
+}
+
+h1{
+    color:white;
     text-align: center;
+    font-size: 100px;
+    font-family:'Franklin Gothic Medium';
 }
 
 
+ container{
+    display:block;
+    align-items: center;
+ }
 ul {
     list-style-type: none;
     margin: 0;
@@ -16,8 +27,9 @@ ul {
   
   li a {
     display: block;
-    color: black;
+    color: white;
     text-align: center;
+    font-size: 50px;
     padding: 14px 16px;
     text-decoration: none;
   }
