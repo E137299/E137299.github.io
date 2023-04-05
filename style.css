@@ -1,11 +1,35 @@
-h1 {
+div.container{
     text-align: center;
-    color: purple;
-    font-family:Arial Narrow Bold;
-    font-size: 100px;
 }
 
-.team_logo {
-    width: 50%;
-    border-radius: 60px;
-}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  
+  li {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  li a:hover {
+    color: red;
+    /* background-color: white; */
+  }
+  
+  .active {
+    background-color: #04AA6D;
+  }
+
+
+
