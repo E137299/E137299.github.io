@@ -9,12 +9,25 @@ h1{
     font-family:'Franklin Gothic Medium';
 }
 
+div{
+  margin-left: 10%;
+  margin-right: 10%
+}
+
+.list_header{
+  color: white;
+  font-size: 30px;
+}
+
+.bullets{
+  color: white;
+}
 
  container{
     display:block;
     align-items: center;
  }
-ul {
+nav.ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
