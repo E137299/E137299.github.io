@@ -10,6 +10,7 @@ h1{
 }
 
 div{
+  background-color:red;
   margin-left: 10%;
   margin-right: 10%
 }
@@ -25,6 +26,7 @@ div{
 
 
 .container ul {
+    display: block;
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -50,13 +52,13 @@ div{
 }
   
 .container .active {
-    background-color: #04AA6D;
+    background-color: forestgreen;
 }
 
 
 /* Dropdown Button */
 .dropbtn {
-  background-color: #04AA6D;
+  background-color: forestgreen;
   color: white;
   padding: 16px;
   font-size: 16px;
@@ -94,6 +96,6 @@ div{
 .dropdown:hover .dropdown-content {display: block;}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {background-color: #04AA6D;}
+.dropdown:hover .dropbtn {background-color: forestgreen;}
 
 
