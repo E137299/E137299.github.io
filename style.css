@@ -1,38 +1,57 @@
+h1{
+    text-align: center;
+}
+
 img{
     border-radius: 50%;
     width:200px;
     height: auto;
 }
 
-.center{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    /* width: 50%; */
+.item {
+    margin-top: 10px;
+    margin-bottom: 0px;
 }
 
-ul.nav {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: white;
+
+div.prog{
+    /* width: 35%; */
+    background-color: blueviolet;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 2%;
+    padding-left: 2%;
+    padding-right: 2%;
+    padding-bottom: 2%;
+    border: 1px solid #77aaff;
+    box-shadow:  -1px 1px #77aaff,
+         -2px 2px #77aaff,
+         -3px 3px #77aaff,
+         -4px 4px #77aaff,
+         -5px 5px #77aaff;
 }
-    
-li.nav {
-    float: left;
-    
+
+iframe.prog {
+    margin:auto;
+    display:block;
+    width: 50%;
+    align-content: center;
+    aspect-ratio: 2/1;
 }
-    
-li a {
-    display: block;
-    color: purple;
+
+h1.prog{
     text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
 }
-    
-    /* Change the link color to #111 (black) on hover */
-li a:hover {
-    background-color: light purple;
-}
+
+#parent {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  #left {
+    width: 50%;
+  }
+  
+  #right {
+    width: 50%;
+  }
