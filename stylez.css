@@ -1,0 +1,20 @@
+/* tag selector - lowest priority */
+h1{
+    text-align: center;
+    font-family: Arial;
+    font-size: 100;
+}
+
+/* class selector - medium priority */
+.program {
+    font-size: 300px;
+    margin:30%;
+    color:pink;
+    font-family: Times New Roman;
+}
+
+/* id selector - top priority */
+#special{
+    font-size:200px;
+    color:orange;
+}

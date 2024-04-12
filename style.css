@@ -34,7 +34,7 @@ div.prog{
 iframe.prog {
     margin:auto;
     display:block;
-    width: 50%;
+    width: 80%;
     align-content: center;
     aspect-ratio: 2/1;
 }
@@ -50,8 +50,19 @@ h1.prog{
   
   #left {
     width: 50%;
+    border-radius: 5%;
   }
   
   #right {
     width: 50%;
+    border-radius: 5%;
+
+  }
+
+  .sample{
+    margin: 5%;
+    padding:5%;
+    background-color: blue;
+    color: red;
+    border-radius: 20%;
   }
