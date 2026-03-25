@@ -1,12 +1,128 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Resume - David Yin</title>
+</head>
 
-    <head>
-        <title>Yin Resume </title>
-    </head>
+<body style="background-color: #f0f0f0; margin: 0; font-family: Arial;">
 
-    <body>
-        <h1>David Yin</h1>
-    </body>
+    <!-- Navigation Bar -->
+    <div style="background-color: #333; padding: 15px; text-align: left;">
+        <a href="index.html" style="color: white; text-decoration: none; margin: 0 20px; font-size: 18px;">Home</a>
+        <a href="photos.html" style="color: white; text-decoration: none; margin: 0 20px; font-size: 18px;">Photo Gallery</a>
+    </div>
 
+    <!-- Page Container -->
+    <div style="max-width: 900px; margin: 20px auto; padding: 20px;">
+
+        <!-- Headshot -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="data:image/jpeg;base64,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" style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%;">
+        </div>
+
+        <!-- Name and Contact -->
+        <div style="background-color: white; padding: 15px; margin-bottom: 20px;">
+            <h2>Name and Contact Information</h2>
+            <p><strong>David Yin</strong></p>
+            <p>Email: david.yin@austinisd.org</p>
+            <p>Phone: (512) 816-4442</p>
+            <p>Address: Austin, TX 78748</p>
+        </div>
+
+        <!-- Work Experience -->
+        <div style="background-color: white; padding: 15px; margin-bottom: 20px;">
+            <h2>Work / Volunteer Experience</h2>
+            <ul>
+                <li>
+                    <strong>Data Analyst Intern | Lower Colorado River Authority</strong>
+                    <ul>
+                        <li>Developed a statistical model to detect anomalies in transformer meter readings.</li>
+                        <li>Designed automated data pipelines for financial data processing and reporting.</li>
+                        <li>Created dashboards analyzing wind and solar energy impact on the ERCOT grid.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Computer Science Instructor | Austin High School</strong>
+                    <ul>
+                        <li>Founded and developed the computer science program.</li>
+                        <li>Designed and implemented curriculum for multiple courses.</li>
+                        <li>Helped students perform 20% above national AP averages.</li>
+                        <li>Communicated complex technical concepts through projects and instruction.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Education -->
+        <div style="background-color: white; padding: 15px; margin-bottom: 20px;">
+            <h2>Education</h2>
+            <ol>
+                <li>
+                    Dartmouth College<br>
+                    Degree: Bachelor of Arts in Earth Science<br>
+                    GPA: N/A<br>
+                    Advanced Courses:
+                    <ul>
+                        <li>Statistics</li>
+                        <li>Data Analysis</li>
+                    </ul>
+                </li>
+                <li>
+                    Texas McCombs School of Business<br>
+                    Program: Data Science and Business Analytics<br>
+                    GPA: N/A<br>
+                    Advanced Courses:
+                    <ul>
+                        <li>Machine Learning</li>
+                        <li>Data Visualization</li>
+                        <li>Predictive Modeling</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Extracurricular Activities -->
+        <div style="background-color: white; padding: 15px; margin-bottom: 20px;">
+            <h2>Extracurricular Activities</h2>
+            <ul>
+                <li>Baking sourdough bread</li>
+                <li>Mountain biking</li>
+                <li>Trail running</li>
+            </ul>
+        </div>
+
+        <!-- Awards / Achievements -->
+        <div style="background-color: white; padding: 15px; margin-bottom: 20px;">
+            <h2>Awards / Achievements</h2>
+            <ul>
+                <li>CTE Teacher of the Year -2019</li>
+                <li>2nd Place, Age Group 45–50 — Dallas Marathon (2018)</li>
+            </ul>
+        </div>
+
+        <!-- References -->
+        <div style="background-color: white; padding: 15px; margin-bottom: 20px;">
+            <h2>References</h2>
+            <table border="1" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <th>Name</th>
+                    <th>Relationship</th>
+                    <th>Contact Info</th>
+                </tr>
+                <tr>
+                    <td>Available Upon Request</td>
+                    <td>Professional</td>
+                    <td>Email upon request</td>
+                </tr>
+                <tr>
+                    <td>Available Upon Request</td>
+                    <td>Supervisor</td>
+                    <td>Email upon request</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+</body>
 </html>
