@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>State Capital Quiz</title>
+</head>
+
+<body style="background-color: #f0f0f0; margin: 0; font-family: Arial;">
+        <!-- Navigation Bar -->
+    <div style="
+        background-color: #333;
+        padding: 15px;
+        text-align: left;
+    ">
+        <a href="index.html" style="
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+        ">Home</a>
+
+        <a href="resume.html" style="
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+        ">Resume</a>
+
+        <a href="photos.html" style="
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+        ">Photo Gallery</a>
+    </div>
+
+    <div style = "text-align: center;">
+    <!-- Question -->
+    <h2 id="question">What is the capital of Texas?</h2>
+
+    <!-- Input -->
+    <input id="answerInput" type="text" placeholder="Enter your answer">
+
+    <br><br>
+
+    <!-- Button -->
+    <button onclick="checkAnswer()">Submit Answer</button>
+
+    <!-- Feedback -->
+    <p id="feedback"></p>
+
+    <!-- Score -->
+    <p id="score">Correct Answers: 0</p>
+    </div>
+    <script>
+        // List of states and capitals
+        let quizData = [
+            {state: "Texas", capital: "Austin"},
+            {state: "California", capital: "Sacramento"},
+            {state: "Florida", capital: "Tallahassee"},
+            {state: "New York", capital: "Albany"},
+            {state: "Illinois", capital: "Springfield"}
+        ];
+
+        let currentQuestion = 0;
+        let correctCount = 0;
+
+        function loadQuestion() {
+            let stateName = quizData[currentQuestion].state;
+            document.getElementById("question").innerText =
+                "What is the capital of " + stateName + "?";
+        }
+
+        function checkAnswer() {
+            let userAnswer = document.getElementById("answerInput").value;
+            let correctAnswer = quizData[currentQuestion].capital;
+
+            if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                document.getElementById("feedback").innerText = "Correct!";
+                correctCount++;
+            } else {
+                document.getElementById("feedback").innerText =
+                    "Incorrect. The correct answer is " + correctAnswer;
+            }
+
+            // Update score
+            document.getElementById("score").innerText =
+                "Correct Answers: " + correctCount;
+
+            // Clear input
+            document.getElementById("answerInput").value = "";
+
+            // Move to next question
+            currentQuestion++;
+
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                document.getElementById("question").innerText = "Quiz Complete!";
+            }
+        }
+
+        // Start quiz
+        loadQuestion();
+    </script>
+
+</body>
+</html>
