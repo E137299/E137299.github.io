@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>David Yin</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+           <!-- Navigation Bar -->
+    <div class = "navbar">
+        <a href="index.html" class = "navlink">Home</a>
+
+        <a href="resume.html" class = "navlink">Resume</a>
+
+        <a href="photos.html" class = "navlink">Photo Gallery</a>
+
+        <a href="geoquiz.html" class = "navlink">Geography Quiz</a>
+    </div>
+        
+    <h1 style="text-align: center; padding: 20px;">Mad Lib</h1>
+
+    <div style="max-width: 80%; margin: 10%; padding: 20px; background-color: white;">
+        <p id = "message">Mad Libs is a popular word-replacement game where one player 
+           asks others for specific parts of speech like nouns, verbs, or 
+           adjectives without revealing the context of a hidden story. 
+           Once the blanks are filled, the story is read aloud, usually 
+           resulting in a hilarious, nonsensical, and surreal narrative 
+           because the words were chosen blindly.
+        </p>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 20px ">
+        <input type="text" id="userInput" placeholder="Type new button name..." hidden>
+        <button id="button" onclick = "action()">Press to Begin Playing</button>
+        </div>
+    </div>
+
+    <script>
+        let count = 0; // Start at 0
+        let questions = ["adjective", "noun", "verb", "noun", "adjective", "noun", "verb"];
+        let answers = [];
+        const start = "Mad Libs is a popular word-replacement game where one player asks others for specific parts of speech like nouns, verbs, or adjectives without revealing the context of a hidden story. Once the blanks are filled, the story is read aloud, usually resulting in a hilarious, nonsensical, and surreal narrative because the words were chosen blindly.";
+
+        function action() {
+            const inputField = document.getElementById("userInput");
+            const actionBtn = document.getElementById("button"); // Changed from "action" to "button"
+            const message = document.getElementById("message");
+
+            if (count < questions.length) {
+                if (inputField.hidden) {
+                    // First click: Show input and ask first question
+                    inputField.hidden = false;
+                    actionBtn.textContent = "Enter";
+                } else {
+                    // Subsequent clicks: Save answer
+                    answers.push(inputField.value);
+                    inputField.value = "";
+                    count++;
+                }
+
+                // Update prompt for the NEXT question (if there is one)
+                if (count < questions.length) {
+                    message.innerText = "Give me a/an " + questions[count] + ": ";
+                    message.style.textAlign = "center";
+                    inputField.placeholder = questions[count];
+                } else {
+                    // If we just finished the last question, trigger the story
+                    showStory();
+                }
+            } else {
+                // Reset Game
+                count = 0;
+                answers = [];
+                inputField.hidden = true;
+                message.innerText = start;
+                actionBtn.textContent = "Press to Begin Playing";
+            }
+        }
+
+        function showStory() {
+            const message = document.getElementById("message");
+            message.innerText = `Yesterday, I saw a ${answers[0]} ${answers[1]} trying to ${answers[2]} a giant ${answers[3]}. It was so ${answers[4]} that I accidentally dropped my ${answers[5]} and started to ${answers[6]}!`;
+            document.getElementById("button").textContent = "Restart";
+            document.getElementById("userInput").hidden = true;
+            count = questions.length; // Ensure next click triggers reset
+        }
+
+
+    </script>
+
+</html>
