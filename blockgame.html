@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Block Push Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        canvas {
+            background-color: black;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body onload="startGame()">
+
+    <div class = "navbar">
+        <a href="index.html" class = "navlink">Home</a>
+        <a href="resume.html" class = "navlink">Resume</a>
+        <a href="photos.html" class = "navlink">Photo Gallery</a>
+        <a href="geoquiz.html" class = "navlink">Geography Quiz</a>
+        <a href="snake.html" class = "navlink">Snake Game</a>
+    </div>
+
+    <h2>Block Push Game</h2>
+    <p>Push blocks by touching them. You can push up to 2 at once.</p>
+
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
+
+    <script>
+
+        // ===== GLOBALS =====
+        let canvas, ctx;
+
+        const PLAYER_SIZE = 30;
+        const BLOCK_SIZE = 40;
+        const SPEED = 5;
+
+        let player;
+        let blocks = [];
+
+        // ===== CLASSES =====
+        class Player {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = PLAYER_SIZE;
+            }
+
+            draw() {
+                ctx.fillStyle = "blue";
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        }
+
+        class Block {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = BLOCK_SIZE;
+            }
+
+            draw() {
+                ctx.fillStyle = "red";
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        }
+
+        // ===== SETUP =====
+        function startGame() {
+            canvas = document.getElementById("gameCanvas");
+            ctx = canvas.getContext("2d");
+
+            player = new Player(227, 100);
+
+            blocks = [
+                new Block(150, 200),
+                new Block(200, 200),
+                new Block(250, 200),
+                new Block(300, 200),
+                new Block(150, 300),
+                new Block(200, 300),
+                new Block(250, 300),
+                new Block(300, 300),
+                new Block(150, 400),
+                new Block(200, 400),
+                new Block(250, 400),
+                new Block(300, 400),
+            ];
+
+            document.addEventListener("keydown", handleKeys);
+
+            draw();
+        }
+
+        // ===== COLLISION =====
+        function isColliding(x1, y1, size1, x2, y2, size2) {
+            return (
+                x1 < x2 + size2 &&
+                x1 + size1 > x2 &&
+                y1 < y2 + size2 &&
+                y1 + size1 > y2
+            );
+        }
+
+        // ===== GET TOUCHING BLOCKS =====
+        function getTouchingBlocks(newX, newY) {
+            return blocks.filter(b =>
+                isColliding(newX, newY, player.size, b.x, b.y, b.size)
+            );
+        }
+
+        function getTouchingBlocks(newX, newY){
+            let collided = []
+            for(let i = 0; i < blocks.length; i++){
+                if (isColliding( newX, newY, player.size, blocks[i].x, blocks[i].y, blocks[i].size)){
+                    collided.push(blocks[i]);
+                }
+            }
+            return collided;
+        }
+
+        // ===== MOVE =====
+        function move(dx, dy) {
+
+            let newX = player.x + dx;
+            let newY = player.y + dy;
+
+            // Stay in bounds
+            if (newX < 0 || newY < 0 ||
+                newX + player.size > canvas.width ||
+                newY + player.size > canvas.height) return;
+
+            let touching = getTouchingBlocks(newX, newY);
+
+            if (touching.length > 2) return;
+
+            for (let b of touching) {
+                let nextX = b.x + dx;
+                let nextY = b.y + dy;
+
+                if (nextX < 0 || nextY < 0 ||
+                    nextX + b.size > canvas.width ||
+                    nextY + b.size > canvas.height) return;
+
+                for (let other of blocks) {
+                    if (other === b) continue;
+
+                    if (isColliding(nextX, nextY, b.size, other.x, other.y, other.size)) {
+                        if (!touching.includes(other)) return;
+                    }
+                }
+            }
+
+            // Move blocks
+            touching.forEach(b => {
+                b.x += dx;
+                b.y += dy;
+            });
+
+            // Move player
+            player.x = newX;
+            player.y = newY;
+
+            draw();
+        }
+
+        // ===== DRAW =====
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            player.draw();
+            blocks.forEach(b => b.draw());
+        }
+
+        // ===== CONTROLS =====
+        function handleKeys(e) {
+            if (e.key === "ArrowUp") move(0, -SPEED);
+            if (e.key === "ArrowDown") move(0, SPEED);
+            if (e.key === "ArrowLeft") move(-SPEED, 0);
+            if (e.key === "ArrowRight") move(SPEED, 0);
+        }
+
+    </script>
+
+</body>
+</html>

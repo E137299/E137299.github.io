@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>State Capital Quiz</title>
+    <title>Javascript Demo - State Capital Quiz</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -43,54 +43,54 @@
     </div>
 
     <script>
-        let quizData = [
-            {state: "Texas", capital: "Austin"},
-            {state: "California", capital: "Sacramento"},
-            {state: "Florida", capital: "Tallahassee"},
-            {state: "New York", capital: "Albany"},
-            {state: "Illinois", capital: "Springfield"}
+        let quizData = [{state : "Texas", capital : "Austin"},
+                        {state: "California", capital: "Sacramento"},
+                        {state: "New York", capital: "Albany"},
+                        {state: "Illinois", capital: "Springfield"}
         ];
 
         let currentQuestion = 0;
         let correctCount = 0;
 
-        function startQuiz() {
+        function loadQuestion(){
+            let stateName = quizData[currentQuestion].state;
+            document.getElementById("question").innerText = "What is the capital of " + stateName + "?";
+        }
+
+        function checkAnswer(){
+            let correctAnswer = quizData[currentQuestion].capital;
+            let userAnswer = document.getElementById("answerInput").value;
+
+            if (userAnswer === correctAnswer){
+                document.getElementById('feedback').innerText = "Correct!";
+                correctCount++;
+            }else{
+                document.getElementById('feedback').innerText = "Incorrect. The correct answer is "+correctAnswer+".";
+            }
+
+            //Update the score
+            document.getElementById('score').innerText = "Correct Answers: "+correctCount;
+
+            //Clear input
+            document.getElementById("answerInput").value = "Enter your answer";
+
+            //Advance to next question
+            currentQuestion++;
+            if (currentQuestion < quizData.length){
+                loadQuestion();
+            }else{
+                document.getElementById("question").innerText = "Quiz Complete!"
+            }
+        }
+
+        function startQuiz(){
             document.getElementById("welcomeScreen").style.display = "none";
             document.getElementById("quizContainer").style.display = "block";
             loadQuestion();
         }
 
-        function loadQuestion() {
-            let stateName = quizData[currentQuestion].state;
-            document.getElementById("question").innerText =
-                "What is the capital of " + stateName + "?";
-        }
 
-        function checkAnswer() {
-            let userAnswer = document.getElementById("answerInput").value;
-            let correctAnswer = quizData[currentQuestion].capital;
 
-            if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
-                document.getElementById("feedback").innerText = "Correct!";
-                correctCount++;
-            } else {
-                document.getElementById("feedback").innerText =
-                    "Incorrect. The correct answer is " + correctAnswer;
-            }
-
-            document.getElementById("score").innerText =
-                "Correct Answers: " + correctCount;
-
-            document.getElementById("answerInput").value = "";
-
-            currentQuestion++;
-
-            if (currentQuestion < quizData.length) {
-                loadQuestion();
-            } else {
-                document.getElementById("question").innerText = "Quiz Complete!";
-            }
-        }
     </script>
 
 </body>

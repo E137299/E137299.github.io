@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Block Push Game</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        .navbar {
+            background-color: #333;
+            padding: 15px;
+        }
+
+        .navlink {
+            color: white;
+            margin-right: 15px;
+            text-decoration: none;
+        }
+
+        canvas {
+            background-color: black;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body onload="startGame()">
+
+    <div class="navbar">
+        <a href="#" class="navlink">Home</a>
+    </div>
+
+    <h2>Block Push Game</h2>
+    <p>Push blocks by touching them. You can push up to 2 at once.</p>
+
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
+
+    <script>
+
+        // ===== GLOBALS =====
+        let canvas, ctx;
+
+        // Player is smaller
+        const PLAYER_SIZE = 30;
+
+        // Blocks are larger
+        const BLOCK_SIZE = 40;
+
+        // Smooth movement speed
+        const SPEED = 5;
+
+        let player;
+        let blocks;
+
+
+        // ===== SETUP =====
+        function startGame() {
+            canvas = document.getElementById("gameCanvas");
+            ctx = canvas.getContext("2d");
+
+            player = { x: 227, y: 100 };
+
+            blocks = [
+                { x: 150, y: 200 },
+                { x: 200, y: 200 },
+                { x: 250, y: 200 },
+                { x: 300, y: 200 },
+                { x: 150, y: 300 },
+                { x: 200, y: 300 },
+                { x: 250, y: 300 },
+                { x: 300, y: 300 },
+                { x: 150, y: 400 },
+                { x: 200, y: 400 },
+                { x: 250, y: 400 },
+                { x: 300, y: 400 },
+            ];
+
+            document.addEventListener("keydown", handleKeys);
+
+            draw();
+        }
+
+
+        // ===== COLLISION =====
+        function isColliding(x1, y1, size1, x2, y2, size2) {
+            return (
+                x1 < x2 + size2 &&
+                x1 + size1 > x2 &&
+                y1 < y2 + size2 &&
+                y1 + size1 > y2
+            );
+        }
+
+
+        // ===== GET TOUCHING BLOCKS =====
+        function getTouchingBlocks(newX, newY) {
+            return blocks.filter(b =>
+                isColliding(newX, newY, PLAYER_SIZE, b.x, b.y, BLOCK_SIZE)
+            );
+        }
+
+
+        // ===== MOVE =====
+        function move(dx, dy) {
+
+            let newX = player.x + dx;
+            let newY = player.y + dy;
+
+            // Stay in bounds
+            if (newX < 0 || newY < 0 ||
+                newX + PLAYER_SIZE > canvas.width ||
+                newY + PLAYER_SIZE > canvas.height) return;
+
+            // Find blocks touching player
+            let touching = getTouchingBlocks(newX, newY);
+
+            // Only allow pushing up to 2 blocks
+            if (touching.length > 2) return;
+
+            // Check if blocks can move
+            for (let b of touching) {
+                let nextX = b.x + dx;
+                let nextY = b.y + dy;
+
+                // Check bounds
+                if (nextX < 0 || nextY < 0 ||
+                    nextX + BLOCK_SIZE > canvas.width ||
+                    nextY + BLOCK_SIZE > canvas.height) return;
+
+                // Check collision with OTHER blocks
+                for (let other of blocks) {
+                    if (other === b) continue;
+
+                    if (isColliding(nextX, nextY, BLOCK_SIZE, other.x, other.y, BLOCK_SIZE)) {
+                        // Allow if that block is ALSO being pushed
+                        if (!touching.includes(other)) return;
+                    }
+                }
+            }
+
+            // Move blocks
+            touching.forEach(b => {
+                b.x += dx;
+                b.y += dy;
+            });
+
+            // Move player
+            player.x = newX;
+            player.y = newY;
+
+            draw();
+        }
+
+
+        // ===== DRAW =====
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Player
+            ctx.fillStyle = "blue";
+            ctx.fillRect(player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
+
+            // Blocks
+            ctx.fillStyle = "red";
+            blocks.forEach(b => ctx.fillRect(b.x, b.y, BLOCK_SIZE, BLOCK_SIZE));
+        }
+
+
+        // ===== CONTROLS =====
+        function handleKeys(e) {
+            if (e.key === "ArrowUp") move(0, -SPEED);
+            if (e.key === "ArrowDown") move(0, SPEED);
+            if (e.key === "ArrowLeft") move(-SPEED, 0);
+            if (e.key === "ArrowRight") move(SPEED, 0);
+        }
+
+    </script>
+
+</body>
+</html>

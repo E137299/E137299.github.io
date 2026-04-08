@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Block Push Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        canvas {
+            background-color: black;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body onload="startGame()">
+
+    <div class = "navbar">
+        <a href="index.html" class = "navlink">Home</a>
+        <a href="resume.html" class = "navlink">Resume</a>
+        <a href="photos.html" class = "navlink">Photo Gallery</a>
+        <a href="geoquiz.html" class = "navlink">Geography Quiz</a>
+        <a href="blockgame.html" class = "navlink">Block Game</a>
+    </div>
+
+    <div style="max-width: 80%; margin: 5%; padding: 20px; background-color: white;">
+        <h2>Snake Game</h2>
+        <p style="width: 80%; margin: auto; text-align: center;">In the classic arcade game, Snake, you control a continuously moving line that grows longer each time it consumes food. 
+        The goal is to achieve the highest score possible by navigating the snake to eat while avoiding collisions with the screen boundaries 
+        or its own ever-expanding body.</p>
+
+        <canvas id="gameCanvas" width="800" height="450"></canvas>
+    </div>
+    <script>
+
+        // ===== GLOBALS =====
+        let canvas, ctx;
+
+        let SPEED = 5
+
+        let player;
+        
+
+        // ===== CLASSES =====
+        class Player {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = 30;
+            }
+
+            draw() {
+                ctx.fillStyle = "blue";
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        }
+
+    
+
+        // ===== SETUP =====
+        function startGame() {
+            canvas = document.getElementById("gameCanvas");
+            ctx = canvas.getContext("2d");
+
+            player = new Player(227, 100);
+
+            document.addEventListener("keydown", handleKeys);
+
+            draw();
+        }
+
+        // ===== MOVE =====
+        function move(dx, dy) {
+            let newX = player.x + dx;
+            let newY = player.y + dy;
+
+            // Stay in bounds
+            if (newX < 0 || newY < 0 ||
+                newX + player.size > canvas.width ||
+                newY + player.size > canvas.height) return;
+
+            // Move player
+            player.x = newX;
+            player.y = newY;
+
+            draw();
+        }
+
+        // ===== DRAW =====
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            player.draw();
+        }
+
+        // ===== CONTROLS =====
+        function handleKeys(e) {
+            // Only prevent default if it's one of the game keys
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                e.preventDefault();
+            }
+
+            if (e.key === "ArrowUp") move(0, -SPEED);
+            if (e.key === "ArrowDown") move(0, SPEED);
+            if (e.key === "ArrowLeft") move(-SPEED, 0);
+            if (e.key === "ArrowRight") move(SPEED, 0);
+        }
+
+    </script>
+
+</body>
+</html>
