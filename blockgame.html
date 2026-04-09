@@ -34,160 +34,170 @@
     <canvas id="gameCanvas" width="500" height="500"></canvas>
 
     <script>
+    const CONFIG = {
+      PLAYER_SIZE: 30,
+      BLOCK_SIZE: 40,
+      SPEED: 5,
+      MAX_PUSHED_BLOCKS: 2,
+      CANVAS_WIDTH: 500,
+      CANVAS_HEIGHT: 500,
+    };
 
-        // ===== GLOBALS =====
-        let canvas, ctx;
+    class Entity {
+      constructor(x, y, size, color) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.color = color;
+      }
 
-        const PLAYER_SIZE = 30;
-        const BLOCK_SIZE = 40;
-        const SPEED = 5;
+      draw(ctx) {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+      }
 
-        let player;
-        let blocks = [];
+      moveBy(dx, dy) {
+        this.x += dx;
+        this.y += dy;
+      }
+    }
 
-        // ===== CLASSES =====
-        class Player {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = PLAYER_SIZE;
-            }
+    class Player extends Entity {
+      constructor(x, y) {
+        super(x, y, CONFIG.PLAYER_SIZE, "blue");
+      }
+    }
 
-            draw() {
-                ctx.fillStyle = "blue";
-                ctx.fillRect(this.x, this.y, this.size, this.size);
-            }
+    class Block extends Entity {
+      constructor(x, y) {
+        super(x, y, CONFIG.BLOCK_SIZE, "red");
+      }
+    }
+
+    class Game {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext("2d");
+
+        this.player = new Player(227, 100);
+        this.blocks = [
+          new Block(150, 200), 
+          new Block(200, 200), 
+          new Block(250, 200), 
+          new Block(300, 200),
+          new Block(150, 300), 
+          new Block(200, 300), 
+          new Block(250, 300), 
+          new Block(300, 300),
+          new Block(150, 400), 
+          new Block(200, 400), 
+          new Block(250, 400), 
+          new Block(300, 400),
+        ];
+
+        this.bindControls();
+        this.draw();
+      }
+
+      bindControls() {
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowUp") this.tryMove(0, -CONFIG.SPEED);
+          if (e.key === "ArrowDown") this.tryMove(0, CONFIG.SPEED);
+          if (e.key === "ArrowLeft") this.tryMove(-CONFIG.SPEED, 0);
+          if (e.key === "ArrowRight") this.tryMove(CONFIG.SPEED, 0);
+        });
+      }
+
+      isColliding(aX, aY, aSize, bX, bY, bSize) {
+        return (
+          aX < bX + bSize &&
+          aX + aSize > bX &&
+          aY < bY + bSize &&
+          aY + aSize > bY
+        );
+      }
+
+      isInsideBounds(x, y, size) {
+        return (
+          x >= 0 &&
+          y >= 0 &&
+          x + size <= this.canvas.width &&
+          y + size <= this.canvas.height
+        );
+      }
+
+      getTouchingBlocks(newPlayerX, newPlayerY) {
+        const touching = [];
+        for (const block of this.blocks) {
+          if (this.isColliding(newPlayerX, newPlayerY, this.player.size, block.x, block.y, block.size)) {
+            touching.push(block);
+          }
         }
+        return touching;
+      }
 
-        class Block {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = BLOCK_SIZE;
-            }
+      canPushSet(touching, dx, dy) {
+        for (const block of touching) {
+          const nextX = block.x + dx;
+          const nextY = block.y + dy;
 
-            draw() {
-                ctx.fillStyle = "red";
-                ctx.fillRect(this.x, this.y, this.size, this.size);
-            }
-        }
+          if (!this.isInsideBounds(nextX, nextY, block.size)) {
+            return false;
+          }
 
-        // ===== SETUP =====
-        function startGame() {
-            canvas = document.getElementById("gameCanvas");
-            ctx = canvas.getContext("2d");
+          for (const other of this.blocks) {
+            if (other === block) continue;
 
-            player = new Player(227, 100);
-
-            blocks = [
-                new Block(150, 200),
-                new Block(200, 200),
-                new Block(250, 200),
-                new Block(300, 200),
-                new Block(150, 300),
-                new Block(200, 300),
-                new Block(250, 300),
-                new Block(300, 300),
-                new Block(150, 400),
-                new Block(200, 400),
-                new Block(250, 400),
-                new Block(300, 400),
-            ];
-
-            document.addEventListener("keydown", handleKeys);
-
-            draw();
-        }
-
-        // ===== COLLISION =====
-        function isColliding(x1, y1, size1, x2, y2, size2) {
-            return (
-                x1 < x2 + size2 &&
-                x1 + size1 > x2 &&
-                y1 < y2 + size2 &&
-                y1 + size1 > y2
+            const collidesAfterMove = this.isColliding(
+              nextX,
+              nextY,
+              block.size,
+              other.x,
+              other.y,
+              other.size
             );
-        }
 
-        // ===== GET TOUCHING BLOCKS =====
-        function getTouchingBlocks(newX, newY) {
-            return blocks.filter(b =>
-                isColliding(newX, newY, player.size, b.x, b.y, b.size)
-            );
-        }
-
-        function getTouchingBlocks(newX, newY){
-            let collided = []
-            for(let i = 0; i < blocks.length; i++){
-                if (isColliding( newX, newY, player.size, blocks[i].x, blocks[i].y, blocks[i].size)){
-                    collided.push(blocks[i]);
-                }
+            if (collidesAfterMove && !touching.includes(other)) {
+              return false;
             }
-            return collided;
+          }
         }
 
-        // ===== MOVE =====
-        function move(dx, dy) {
+        return true;
+      }
 
-            let newX = player.x + dx;
-            let newY = player.y + dy;
+      tryMove(dx, dy) {
+        const newX = this.player.x + dx;
+        const newY = this.player.y + dy;
 
-            // Stay in bounds
-            if (newX < 0 || newY < 0 ||
-                newX + player.size > canvas.width ||
-                newY + player.size > canvas.height) return;
+        if (!this.isInsideBounds(newX, newY, this.player.size)) return;
 
-            let touching = getTouchingBlocks(newX, newY);
+        const touching = this.getTouchingBlocks(newX, newY);
+        if (touching.length > CONFIG.MAX_PUSHED_BLOCKS) return;
 
-            if (touching.length > 2) return;
+        if (!this.canPushSet(touching, dx, dy)) return;
 
-            for (let b of touching) {
-                let nextX = b.x + dx;
-                let nextY = b.y + dy;
-
-                if (nextX < 0 || nextY < 0 ||
-                    nextX + b.size > canvas.width ||
-                    nextY + b.size > canvas.height) return;
-
-                for (let other of blocks) {
-                    if (other === b) continue;
-
-                    if (isColliding(nextX, nextY, b.size, other.x, other.y, other.size)) {
-                        if (!touching.includes(other)) return;
-                    }
-                }
-            }
-
-            // Move blocks
-            touching.forEach(b => {
-                b.x += dx;
-                b.y += dy;
-            });
-
-            // Move player
-            player.x = newX;
-            player.y = newY;
-
-            draw();
+        for (const block of touching) {
+          block.moveBy(dx, dy);
         }
 
-        // ===== DRAW =====
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.player.moveBy(dx, dy);
+        this.draw();
+      }
 
-            player.draw();
-            blocks.forEach(b => b.draw());
+      draw() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.player.draw(this.ctx);
+        for (const block of this.blocks) {
+          block.draw(this.ctx);
         }
+      }
+    }
 
-        // ===== CONTROLS =====
-        function handleKeys(e) {
-            if (e.key === "ArrowUp") move(0, -SPEED);
-            if (e.key === "ArrowDown") move(0, SPEED);
-            if (e.key === "ArrowLeft") move(-SPEED, 0);
-            if (e.key === "ArrowRight") move(SPEED, 0);
-        }
-
-    </script>
+    window.addEventListener("load", () => {
+      new Game("gameCanvas");
+    });
+  </script>
 
 </body>
 </html>

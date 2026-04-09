@@ -25,93 +25,131 @@
         <a href="resume.html" class = "navlink">Resume</a>
         <a href="photos.html" class = "navlink">Photo Gallery</a>
         <a href="geoquiz.html" class = "navlink">Geography Quiz</a>
-        <a href="blockgame.html" class = "navlink">Block Game</a>
+        <a href="snake.html" class = "navlink">Snake Game</a>
     </div>
 
-    <div style="max-width: 80%; margin: 5%; padding: 20px; background-color: white;">
-        <h2>Snake Game</h2>
-        <p style="width: 80%; margin: auto; text-align: center;">In the classic arcade game, Snake, you control a continuously moving line that grows longer each time it consumes food. 
-        The goal is to achieve the highest score possible by navigating the snake to eat while avoiding collisions with the screen boundaries 
-        or its own ever-expanding body.</p>
+    <h2>Block Push Game</h2>
+    <p>Push blocks by touching them. You can push up to 2 at once.</p>
 
-        <canvas id="gameCanvas" width="800" height="450"></canvas>
-    </div>
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
+
     <script>
+    const CONFIG = {
+      PLAYER_SIZE: 30,
+      BLOCK_SIZE: 40,
+      SPEED: 5,
+      MAX_PUSHED_BLOCKS: 2,
+      CANVAS_WIDTH: 500,
+      CANVAS_HEIGHT: 500,
+    };
 
-        // ===== GLOBALS =====
-        let canvas, ctx;
+    class Entity {
+      constructor(x, y, size, color) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.color = color;
+      }
 
-        let SPEED = 5
+      draw(ctx) {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+      }
 
-        let player;
-        
+      moveBy(dx, dy) {
+        this.x += dx;
+        this.y += dy;
+      }
+    }
 
-        // ===== CLASSES =====
-        class Player {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = 30;
-            }
+    class Player extends Entity {
+      constructor(x, y) {
+        super(x, y, CONFIG.PLAYER_SIZE, "blue");
+      }
+    }
 
-            draw() {
-                ctx.fillStyle = "blue";
-                ctx.fillRect(this.x, this.y, this.size, this.size);
-            }
+    class Block extends Entity {
+      constructor(x, y) {
+        super(x, y, CONFIG.BLOCK_SIZE, "red");
+        this.deltaX = 5;
+      }
+    }
+
+    class Game {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext("2d");
+
+        this.player = new Player(227, 100);
+
+        this.apple = new Block(50, 50);
+
+        this.bindControls();
+
+        while (true){
+          this.apple.moveBy(this.deltaX, 0);
         }
+        this.draw();
+      }
 
-    
+      bindControls() {
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowUp") this.tryMove(0, -CONFIG.SPEED);
+          if (e.key === "ArrowDown") this.tryMove(0, CONFIG.SPEED);
+          if (e.key === "ArrowLeft") this.tryMove(-CONFIG.SPEED, 0);
+          if (e.key === "ArrowRight") this.tryMove(CONFIG.SPEED, 0);
+        });
+      }
 
-        // ===== SETUP =====
-        function startGame() {
-            canvas = document.getElementById("gameCanvas");
-            ctx = canvas.getContext("2d");
+      isColliding(aX, aY, aSize, bX, bY, bSize) {
+        return (
+          aX < bX + bSize &&
+          aX + aSize > bX &&
+          aY < bY + bSize &&
+          aY + aSize > bY
+        );
+      }
 
-            player = new Player(227, 100);
+      isInsideBounds(x, y, size) {
+        return (
+          x >= 0 &&
+          y >= 0 &&
+          x + size <= this.canvas.width &&
+          y + size <= this.canvas.height
+        );
+      }
 
-            document.addEventListener("keydown", handleKeys);
-
-            draw();
+      getTouchingBlocks(newPlayerX, newPlayerY) {
+        const touching = [];
+        for (const block of this.blocks) {
+          if (this.isColliding(newPlayerX, newPlayerY, this.player.size, block.x, block.y, block.size)) {
+            touching.push(block);
+          }
         }
+        return touching;
+      }
 
-        // ===== MOVE =====
-        function move(dx, dy) {
-            let newX = player.x + dx;
-            let newY = player.y + dy;
 
-            // Stay in bounds
-            if (newX < 0 || newY < 0 ||
-                newX + player.size > canvas.width ||
-                newY + player.size > canvas.height) return;
+      tryMove(dx, dy) {
+        const newX = this.player.x + dx;
+        const newY = this.player.y + dy;
 
-            // Move player
-            player.x = newX;
-            player.y = newY;
+        if (!this.isInsideBounds(newX, newY, this.player.size)) return;
 
-            draw();
-        }
+        this.player.moveBy(dx, dy);
+        this.draw();
+      }
 
-        // ===== DRAW =====
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+      draw() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.player.draw(this.ctx);
+      }
+    }
 
-            player.draw();
-        }
-
-        // ===== CONTROLS =====
-        function handleKeys(e) {
-            // Only prevent default if it's one of the game keys
-            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-                e.preventDefault();
-            }
-
-            if (e.key === "ArrowUp") move(0, -SPEED);
-            if (e.key === "ArrowDown") move(0, SPEED);
-            if (e.key === "ArrowLeft") move(-SPEED, 0);
-            if (e.key === "ArrowRight") move(SPEED, 0);
-        }
-
-    </script>
+    window.addEventListener("load", () => {
+      new Game("gameCanvas");
+    });
+  </script>
 
 </body>
 </html>
