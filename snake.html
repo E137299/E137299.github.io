@@ -25,131 +25,136 @@
         <a href="resume.html" class = "navlink">Resume</a>
         <a href="photos.html" class = "navlink">Photo Gallery</a>
         <a href="geoquiz.html" class = "navlink">Geography Quiz</a>
-        <a href="snake.html" class = "navlink">Snake Game</a>
+        <a href="blockgame.html" class = "navlink">Block Game</a>
     </div>
 
-    <h2>Block Push Game</h2>
-    <p>Push blocks by touching them. You can push up to 2 at once.</p>
+    <div style="max-width: 80%; margin: 5%; padding: 20px; background-color: white;">
+        <h2>Snake Game</h2>
+        <p style="width: 80%; margin: auto; text-align: center;">In the classic arcade game, Snake, you control a continuously moving line that grows longer each time it consumes food. 
+        The goal is to achieve the highest score possible by navigating the snake to eat while avoiding collisions with the screen boundaries 
+        or its own ever-expanding body.</p>
 
-    <canvas id="gameCanvas" width="500" height="500"></canvas>
-
+        <canvas id="gameCanvas" width="800" height="450"></canvas>
+    </div>
     <script>
-    const CONFIG = {
-      PLAYER_SIZE: 30,
-      BLOCK_SIZE: 40,
-      SPEED: 5,
-      MAX_PUSHED_BLOCKS: 2,
-      CANVAS_WIDTH: 500,
-      CANVAS_HEIGHT: 500,
-    };
 
-    class Entity {
-      constructor(x, y, size, color) {
-        this.x = x;
-        this.y = y;
-        this.size = size;
-        this.color = color;
-      }
+        // ===== GLOBALS =====
+        let canvas, ctx;
+        let SPEED = 5;
+        let player;
+        let apple;
+        
 
-      draw(ctx) {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.size, this.size);
-      }
+        // ===== CLASSES =====
+        class Entity{
+            constructor(x, y, size, color){
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.color = color;
+                this.speed = 5;
+            }
 
-      moveBy(dx, dy) {
-        this.x += dx;
-        this.y += dy;
-      }
-    }
+            draw(ctx){
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
 
-    class Player extends Entity {
-      constructor(x, y) {
-        super(x, y, CONFIG.PLAYER_SIZE, "blue");
-      }
-    }
-
-    class Block extends Entity {
-      constructor(x, y) {
-        super(x, y, CONFIG.BLOCK_SIZE, "red");
-        this.deltaX = 5;
-      }
-    }
-
-    class Game {
-      constructor(canvasId) {
-        this.canvas = document.getElementById(canvasId);
-        this.ctx = this.canvas.getContext("2d");
-
-        this.player = new Player(227, 100);
-
-        this.apple = new Block(50, 50);
-
-        this.bindControls();
-
-        while (true){
-          this.apple.moveBy(this.deltaX, 0);
+            move(dx, dy){
+                this.x += dx;
+                this.y += dy;
+            }
         }
-        this.draw();
-      }
 
-      bindControls() {
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "ArrowUp") this.tryMove(0, -CONFIG.SPEED);
-          if (e.key === "ArrowDown") this.tryMove(0, CONFIG.SPEED);
-          if (e.key === "ArrowLeft") this.tryMove(-CONFIG.SPEED, 0);
-          if (e.key === "ArrowRight") this.tryMove(CONFIG.SPEED, 0);
-        });
-      }
-
-      isColliding(aX, aY, aSize, bX, bY, bSize) {
-        return (
-          aX < bX + bSize &&
-          aX + aSize > bX &&
-          aY < bY + bSize &&
-          aY + aSize > bY
-        );
-      }
-
-      isInsideBounds(x, y, size) {
-        return (
-          x >= 0 &&
-          y >= 0 &&
-          x + size <= this.canvas.width &&
-          y + size <= this.canvas.height
-        );
-      }
-
-      getTouchingBlocks(newPlayerX, newPlayerY) {
-        const touching = [];
-        for (const block of this.blocks) {
-          if (this.isColliding(newPlayerX, newPlayerY, this.player.size, block.x, block.y, block.size)) {
-            touching.push(block);
-          }
+        class Player extends Entity{
+            // constructor
+            constructor(x, y){
+                super(x, y, 30, "blue")
+            }
         }
-        return touching;
-      }
 
+        class Apple extends Entity{
+            constructor(x,y){
+                super(x, y, 40, "red");
+            }
+        }
 
-      tryMove(dx, dy) {
-        const newX = this.player.x + dx;
-        const newY = this.player.y + dy;
+    
 
-        if (!this.isInsideBounds(newX, newY, this.player.size)) return;
+        // ===== SETUP =====
+        function startGame() {
+            canvas = document.getElementById("gameCanvas");
+            ctx = canvas.getContext("2d");
 
-        this.player.moveBy(dx, dy);
-        this.draw();
-      }
+            player = new Player(227, 100);
+            apple = new Apple(50,50)
 
-      draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.player.draw(this.ctx);
-      }
-    }
+            document.addEventListener("keydown", handleKeys);
+            
+            gameLoop();
+            
+        }
 
-    window.addEventListener("load", () => {
-      new Game("gameCanvas");
-    });
-  </script>
+        function gameLoop(){
+            update();
+            draw();
+            requestAnimationFrame(gameLoop)
+        }
+
+        function update(){
+            apple.move(apple.speed, 0);
+            if (!inBounds(apple)) {
+                apple.speed *= -1; // reverse direction
+            }
+        }
+
+        function inBounds(entity){
+          return (
+              entity.x >= 0 &&
+              entity.y >= 0 &&
+              entity.x + entity.size <= canvas.width &&
+              entity.y + entity.size <= canvas.height
+            );
+        }
+
+        // ===== MOVE =====
+        function move(dx, dy) {
+            let newX = player.x + dx;
+            let newY = player.y + dy;
+
+            // Stay in bounds
+            if (newX < 0 || newY < 0 ||
+                newX + player.size > canvas.width ||
+                newY + player.size > canvas.height) return;
+
+            // Move player
+            player.x = newX;
+            player.y = newY;
+
+            draw();
+        }
+
+        // ===== DRAW =====
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            player.draw(ctx);
+            apple.draw(ctx)
+        }
+
+        // ===== CONTROLS =====
+        function handleKeys(e) {
+            // Only prevent default if it's one of the game keys
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                e.preventDefault();
+            }
+
+            if (e.key === "ArrowUp") move(0, -SPEED);
+            if (e.key === "ArrowDown") move(0, SPEED);
+            if (e.key === "ArrowLeft") move(-SPEED, 0);
+            if (e.key === "ArrowRight") move(SPEED, 0);
+        }
+
+    </script>
 
 </body>
 </html>
