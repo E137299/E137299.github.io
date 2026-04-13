@@ -40,118 +40,105 @@
 
         // ===== GLOBALS =====
         let canvas, ctx;
-        let SPEED = 5;
-        let player;
-        let apple;
-        
+        let head;
 
-        // ===== CLASSES =====
-        class Entity{
-            constructor(x, y, size, color){
+        // ===== CLASS =====
+        class Head {
+            constructor(x, y) {
                 this.x = x;
                 this.y = y;
-                this.size = size;
-                this.color = color;
-                this.speed = 5;
+                this.size = 20;
+                this.color = "blue";
+                this.speed =3
+                this.dx = this.speed;
+                this.dy = 0;
             }
 
-            draw(ctx){
+            draw(ctx) {
                 ctx.fillStyle = this.color;
                 ctx.fillRect(this.x, this.y, this.size, this.size);
             }
 
-            move(dx, dy){
-                this.x += dx;
-                this.y += dy;
+            move() {
+                this.x += this.dx;
+                this.y += this.dy;
+
+                // Bounce off walls
+                if (!this.inBounds()) {
+                    if (this.x <= 0 || this.x + this.size >= canvas.width) {
+                        this.dx *= -1;
+                    }
+                    if (this.y <= 0 || this.y + this.size >= canvas.height) {
+                        this.dy *= -1;
+                    }
+                }
+            }
+
+            inBounds() {
+                return (
+                    this.x >= 0 &&
+                    this.y >= 0 &&
+                    this.x + this.size <= canvas.width &&
+                    this.y + this.size <= canvas.height
+                );
             }
         }
-
-        class Player extends Entity{
-            // constructor
-            constructor(x, y){
-                super(x, y, 30, "blue")
-            }
-        }
-
-        class Apple extends Entity{
-            constructor(x,y){
-                super(x, y, 40, "red");
-            }
-        }
-
-    
 
         // ===== SETUP =====
         function startGame() {
             canvas = document.getElementById("gameCanvas");
             ctx = canvas.getContext("2d");
 
-            player = new Player(227, 100);
-            apple = new Apple(50,50)
+            head = new Head(227, 100);
 
             document.addEventListener("keydown", handleKeys);
-            
+
             gameLoop();
-            
         }
 
-        function gameLoop(){
+        // ===== GAME LOOP =====
+        function gameLoop() {
             update();
             draw();
-            requestAnimationFrame(gameLoop)
+            requestAnimationFrame(gameLoop);
         }
 
-        function update(){
-            apple.move(apple.speed, 0);
-            if (!inBounds(apple)) {
-                apple.speed *= -1; // reverse direction
-            }
-        }
-
-        function inBounds(entity){
-          return (
-              entity.x >= 0 &&
-              entity.y >= 0 &&
-              entity.x + entity.size <= canvas.width &&
-              entity.y + entity.size <= canvas.height
-            );
-        }
-
-        // ===== MOVE =====
-        function move(dx, dy) {
-            let newX = player.x + dx;
-            let newY = player.y + dy;
-
-            // Stay in bounds
-            if (newX < 0 || newY < 0 ||
-                newX + player.size > canvas.width ||
-                newY + player.size > canvas.height) return;
-
-            // Move player
-            player.x = newX;
-            player.y = newY;
-
-            draw();
+        // ===== UPDATE =====
+        function update() {
+            head.move();
         }
 
         // ===== DRAW =====
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            player.draw(ctx);
-            apple.draw(ctx)
+            head.draw(ctx);
         }
 
         // ===== CONTROLS =====
         function handleKeys(e) {
-            // Only prevent default if it's one of the game keys
             if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
                 e.preventDefault();
             }
 
-            if (e.key === "ArrowUp") move(0, -SPEED);
-            if (e.key === "ArrowDown") move(0, SPEED);
-            if (e.key === "ArrowLeft") move(-SPEED, 0);
-            if (e.key === "ArrowRight") move(SPEED, 0);
+            if (e.key === "ArrowUp" && head.dy !== head.speed) {
+                head.dy = -head.speed;
+                head.dx = 0;
+            }
+
+            if (e.key === "ArrowDown" && head.dy !== -head.speed) {
+                head.dy = head.speed;
+                head.dx = 0;
+            }
+
+            if (e.key === "ArrowLeft" && head.dx !== head.speed) {
+                head.dy = 0;
+                head.dx = -head.speed;
+            }
+
+            if (e.key === "ArrowRight" && head.dx !== -head.speed) {
+                head.dy = 0;
+                head.dx = head.speed;
+            }
         }
 
     </script>
